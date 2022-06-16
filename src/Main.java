@@ -1,5 +1,3 @@
-package com.company;
-
 import java.io.*;
 import java.util.Scanner;
 
@@ -7,22 +5,22 @@ public class Main {
 
 
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) {
 
         Scanner lector = new Scanner(System.in);
         String opcion = "";
 
-        String fileName = "data/plane.dat.txt";
+        final String FILE_NAME = "data/plane.dat";
 
-        FileInputStream inputFile = null;
-        BufferedInputStream bufferedInput = null;
-        ObjectInputStream objectInput = null;
+        FileInputStream inputFile;
+        BufferedInputStream bufferedInput;
+        ObjectInputStream objectInput;
 
         Plane f18 = null;
 
 
-        try{
-            inputFile = new FileInputStream(fileName);
+        try {
+            inputFile = new FileInputStream(FILE_NAME);
             bufferedInput = new BufferedInputStream(inputFile);
             objectInput = new ObjectInputStream(bufferedInput);
 
@@ -45,8 +43,9 @@ public class Main {
         BufferedOutputStream  bufferedOutput = null;
         ObjectOutputStream objectOutput = null;
 
+        boolean menu = false;
 
-        while (!opcion.equals("q") || !opcion.equals("Q")) {
+        while (!menu) {
             System.out.println("1 - Inicializar F18\n" +
                     "2 - Alternar estado de los flaps.\n" +
                     "3 - Alternar estado del tren de aterrizaje.\n" +
@@ -62,38 +61,56 @@ public class Main {
                 case "1":
 
                     f18 = f18.createPlane();
-                    System.out.println(f18);
 
                 break;
 
 
                 case "2":
-
-                    try{
+                    if (f18 != null) {
                         f18.toggleFlaps();
                         System.out.println(f18);
+                    } else {
+                        System.out.println("Aun no se ha creado un avión");
+                    }
 
-                    }catch (NullPointerException ex){
+
+                break;
+
+                case "3":
+
+                    if (f18 != null) {
+                        f18.toggleLandingGear();
+                        System.out.println(f18);
+                    } else {
                         System.out.println("Aun no se ha creado un avión");
                     }
 
                 break;
 
-                case "3":
-                    f18.toggleLandingGear();
-                    System.out.println(f18);
-
-
-                break;
-
                 case "4":
-                    f18.ejectionSystem();
-                    System.out.println(f18);
+
+                    if (f18 != null) {
+                        f18.ejectionSystem();
+                        System.out.println(f18);
+                    } else {
+                        System.out.println("Aun no se ha creado un avión");
+                    }
 
                 break;
 
                 case "5":
-                    f18.isSeatOccupation();
+
+                    if (f18 != null) {
+                        if (f18.getEyectionSystem()) {
+                            f18.setSeatOccupation(false);
+                            System.out.println(f18);
+                        } else {
+                            System.out.println("El sistema de eyección está desactivado");
+                        }
+
+                    } else {
+                        System.out.println("Aun no se ha creado un avión");
+                    }
 
                 break;
 
@@ -101,7 +118,8 @@ public class Main {
                 case "q":
 
                     try{
-                        outputFile = new FileOutputStream(fileName);
+
+                        outputFile = new FileOutputStream(FILE_NAME);
                         bufferedOutput = new BufferedOutputStream(outputFile);
                         objectOutput = new ObjectOutputStream(bufferedOutput);
 
@@ -123,10 +141,10 @@ public class Main {
                         }catch (IOException e) {
                             System.out.println("No se ha podido cerrar el archivo");
                         }
-
-                        break;
                     }
 
+                    menu = true;
+                    break;
 
                 default:
                     System.out.println("Introduzca un valor valido");
